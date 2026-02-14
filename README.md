@@ -43,14 +43,14 @@ admin.html / organizer.html: Management dashboards for event staff.
    cd EventEase-Campus-Ticketing ```
    
 2.**Install Packages:**
-```bash```
-npm install ```
+
+npm install
 
 3.**Environment Setup:**
- ```bash```
+
 Create a .env file (refer to the .gitignore for what to exclude).
-Add your Firebase config keys.```
+Add your Firebase config keys.
 
 4.**Launch:**
-```bash```
-Use VS Code Live Server to open index.html.```
+
+Use VS Code Live Server to open index.html.
