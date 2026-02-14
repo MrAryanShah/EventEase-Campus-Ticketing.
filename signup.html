@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventEase - Join Us</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <style>
+        body { background: #120d1d; color: white; font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .input-box { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); color: white; outline: none; }
+        .input-box:focus { border-color: #d946ef; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="glass p-10 rounded-[2rem] w-full max-w-md">
+        <h1 class="text-3xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-purple-400 mb-8">Create Account</h1>
+        
+        <form id="signupForm" class="space-y-4">
+            <input type="text" id="userName" placeholder="Full Name" class="input-box w-full px-5 py-3 rounded-xl" required>
+            <input type="email" id="userEmail" placeholder="Email Address" class="input-box w-full px-5 py-3 rounded-xl" required>
+            <input type="password" id="userPass" placeholder="Create Password" class="input-box w-full px-5 py-3 rounded-xl" required>
+            
+            <select id="userRole" class="input-box w-full px-5 py-3 rounded-xl">
+                <option value="student" style="color: black;">Student</option>
+                <option value="organizer" style="color: black;">Organizer</option>
+            </select>
+
+            <button type="submit" id="btn" class="w-full py-4 rounded-xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 shadow-lg mt-4">Create Account</button>
+        </form>
+        <p id="msg" class="mt-4 text-center text-sm text-pink-400 hidden"></p>
+        <p class="text-center mt-6 text-gray-400 text-sm">Already have an account? <a href="login.html" class="text-pink-400">Login</a></p>
+    </div>
+
+    <script>
+        // Use your configuration from your Firebase Console
+        const firebaseConfig = {
+            apiKey: "AIzaSyDdPJJd5bDCPumIxFrxtj176S1Bozseyjk",
+            authDomain: "eventease-202e2.firebaseapp.com",
+            projectId: "eventease-202e2",
+            storageBucket: "eventease-202e2.appspot.com",
+            messagingSenderId: "468741602983",
+            appId: "1:468741602983:web:53173d1f855d95e09f598b" // Check your Project Settings for this!
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        document.getElementById('signupForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn');
+            const msg = document.getElementById('msg');
+            
+            btn.innerText = "Working...";
+            btn.disabled = true;
+
+            const name = document.getElementById('userName').value;
+            const email = document.getElementById('userEmail').value;
+            const pass = document.getElementById('userPass').value;
+            const role = document.getElementById('userRole').value;
+
+            try {
+                // 1. Create the Auth User
+                const cred = await auth.createUserWithEmailAndPassword(email, pass);
+                
+                // 2. Save User Data to Database
+                await db.collection("users").doc(cred.user.uid).set({
+                    name: name,
+                    email: email,
+                    role: role,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                alert("Account Created! Redirecting...");
+                window.location.href = (role === 'organizer') ? "organizer.html" : "frontend.html";
+
+            } catch (err) {
+                console.error(err);
+                msg.innerText = err.message;
+                msg.classList.remove('hidden');
+                btn.innerText = "Create Account";
+                btn.disabled = false;
+            }
+        };
+    </script>
+</body>
+</html>

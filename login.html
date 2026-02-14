@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventEase - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <style>
+        body {
+            background: #120d1d; /* Deep Dark Violet */
+            font-family: 'Inter', sans-serif;
+            color: white;
+        }
+        .glass-container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .input-style {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .input-style:focus {
+            border-color: #d946ef;
+            box-shadow: 0 0 15px rgba(217, 70, 239, 0.2);
+            outline: none;
+        }
+        .btn-gradient {
+            background: linear-gradient(90deg, #d946ef, #9333ea);
+            box-shadow: 0 4px 20px rgba(147, 51, 234, 0.4);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[120px] pointer-events-none"></div>
+
+    <div class="glass-container p-10 rounded-[2rem] w-full max-w-md relative z-10">
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-white mb-2">Welcome Back</h1>
+            <p class="text-gray-400">Login to your EventEase account</p>
+        </div>
+
+        <form id="loginForm" class="space-y-6">
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Email Address</label>
+                <input type="email" id="email" required placeholder="name@example.com"
+                    class="input-style w-full px-5 py-4 rounded-2xl">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Password</label>
+                <input type="password" id="password" required placeholder="••••••••"
+                    class="input-style w-full px-5 py-4 rounded-2xl">
+            </div>
+
+            <p id="errorMsg" class="text-pink-400 text-xs text-center hidden"></p>
+
+            <button type="submit" id="submitBtn"
+                class="btn-gradient w-full py-4 rounded-2xl text-white font-bold text-lg transition transform active:scale-95">
+                Login
+            </button>
+        </form>
+
+        <div class="mt-8 text-center">
+            <p class="text-gray-500">Don't have an account? 
+                <a href="signup.html" class="text-pink-400 hover:text-pink-300 font-medium">Create account</a>
+            </p>
+            <a href="admin.html" class="inline-block mt-4 text-xs text-gray-600 hover:text-gray-400 transition">Admin Login</a>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDdPJJd5bDCPumIxFrxtj176S1Bozseyjk",
+            authDomain: "eventease-202e2.firebaseapp.com",
+            projectId: "eventease-202e2"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+
+            try {
+                const userCred = await auth.signInWithEmailAndPassword(
+                    document.getElementById('email').value,
+                    document.getElementById('password').value
+                );
+                
+                const doc = await db.collection("users").doc(userCred.user.uid).get();
+                if (doc.exists) {
+                    const role = doc.data().role;
+                    if (role === 'organizer') window.location.href = "organizer.html";
+                    else if (role === 'admin') window.location.href = "admin.html";
+                    else window.location.href = "frontend.html";
+                }
+            } catch (error) {
+                document.getElementById('errorMsg').innerText = error.message;
+                document.getElementById('errorMsg').classList.remove('hidden');
+                btn.innerText = "Login";
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

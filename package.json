@@ -1,0 +1,30 @@
+{
+  "name": "eventease-backend",
+  "version": "1.0.0",
+  "description": "Backend API server for EventEase college event portal",
+  "main": "backend.js",
+  "scripts": {
+    "start": "node backend.js",
+    "dev": "nodemon backend.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^4.18.2",
+    "firebase-admin": "^11.11.1",
+    "html5-qrcode": "^2.3.8",
+    "lucide-react": "^0.564.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": [
+    "eventease",
+    "college",
+    "events",
+    "api"
+  ],
+  "author": "",
+  "license": "ISC"
+}

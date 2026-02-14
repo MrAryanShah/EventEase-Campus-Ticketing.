@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EventEase | Scanner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <style>
+        body { background-color: #0a0612; color: #e2e8f0; font-family: 'Inter', sans-serif; height: 100vh; overflow: hidden; }
+        /* Forces the video to be a smaller square so results stay visible */
+        #reader { width: 280px !important; height: 280px !important; border-radius: 1.5rem; overflow: hidden; margin: 0 auto; border: none !important; }
+        #reader__scan_region video { width: 100% !important; height: 100% !important; object-fit: cover !important; }
+        .scanner-container { border: 3px solid #d946ef; box-shadow: 0 0 15px rgba(217, 70, 239, 0.4); }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-between py-8 px-4">
+
+    <audio id="successSound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
+    <audio id="errorSound" src="https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3"></audio>
+
+    <div class="text-center">
+        <h2 class="text-3xl font-black text-white tracking-tighter">Event<span class="text-fuchsia-500">Scanner</span></h2>
+        <p class="text-gray-400 text-xs mt-1 uppercase tracking-widest font-semibold">Organizer Mode</p>
+    </div>
+
+    <div class="scanner-container rounded-3xl p-1 bg-black">
+        <div id="reader"></div>
+    </div>
+
+    <div class="w-full max-w-xs h-32 flex flex-col justify-center">
+        <div id="result-box" class="hidden p-4 rounded-xl border bg-white/5 backdrop-blur-md text-center">
+            <div id="status-icon" class="text-2xl mb-1"></div>
+            <h3 id="result-text" class="text-lg font-bold"></h3>
+            <p id="result-detail" class="text-gray-400 text-xs"></p>
+        </div>
+    </div>
+
+    <div class="w-full max-w-xs flex flex-col gap-3">
+        <button onclick="location.reload()" class="w-full bg-white/10 hover:bg-white/20 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition border border-white/10">
+            Reset Camera
+        </button>
+        <p class="text-[10px] text-gray-600 text-center">EventEase v1.0 • 2026</p>
+    </div>
+
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyDdPJJd5bDCPumIxFrxtj176S1Bozseyjk",
+    authDomain: "eventease-202e2.firebaseapp.com",
+    projectId: "eventease-202e2",
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+let isScanning = true;
+
+function playSound(isSuccess) {
+    const sound = document.getElementById(isSuccess ? "successSound" : "errorSound");
+    sound.currentTime = 0;
+    sound.play().catch(() => {});
+}
+
+function showStatus(message, type, detail = "") {
+    const box = document.getElementById("result-box");
+    const text = document.getElementById("result-text");
+    const det = document.getElementById("result-detail");
+    const icon = document.getElementById("status-icon");
+
+    box.classList.remove("hidden", "border-emerald-500", "border-red-500", "border-orange-500");
+
+    if (type === 'success') {
+        box.classList.add("border-emerald-500");
+        text.className = "text-lg font-bold text-emerald-400";
+        icon.innerText = "✅";
+        playSound(true);
+    } else if (type === 'warning') {
+        box.classList.add("border-orange-500");
+        text.className = "text-lg font-bold text-orange-400";
+        icon.innerText = "⚠️";
+        playSound(false);
+    } else {
+        box.classList.add("border-red-500");
+        text.className = "text-lg font-bold text-red-400";
+        icon.innerText = "❌";
+        playSound(false);
+    }
+
+    text.innerText = message;
+    det.innerText = detail;
+
+    setTimeout(() => {
+        box.classList.add("hidden");
+        isScanning = true;
+    }, 4000);
+}
+
+function onScanSuccess(decodedText) {
+    if (!isScanning) return;
+    isScanning = false;
+
+    const ids = decodedText.split("_");
+    if(ids.length < 2) {
+        showStatus("Invalid QR", "error", "Please scan a valid EventEase ticket.");
+        return;
+    }
+
+    const [eventId, regId] = ids;
+
+    db.collection("events").doc(eventId).collection("registrations").doc(regId).get()
+    .then(doc => {
+        if (!doc.exists) {
+            showStatus("Not Registered", "error", "Record not found.");
+            return;
+        }
+
+        const data = doc.data();
+        // Critical fix: Check if specifically true. If field is missing, it's NOT checked in.
+        if (data.checkedIn === true) {
+            showStatus("Already Used", "warning", "Student has already entered.");
+        } else {
+            db.collection("events").doc(eventId).collection("registrations").doc(regId).update({
+                checkedIn: true,
+                checkInTime: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            showStatus("Entry Allowed", "success", data.email);
+        }
+    })
+    .catch(() => showStatus("Error", "error", "Database connection issue."));
+}
+
+const html5QrcodeScanner = new Html5Qrcode("reader");
+html5QrcodeScanner.start(
+    { facingMode: "environment" },
+    { fps: 20, qrbox: 200 }, // Higher FPS for faster detection
+    onScanSuccess
+);
+</script>
+</body>
+</html>

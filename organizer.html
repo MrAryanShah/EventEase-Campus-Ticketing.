@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EventEase Pro Studio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    
+    /* BACKGROUND: High Quality Concert Vibe */
+    .event-bg {
+      background: linear-gradient(to bottom, rgba(10, 10, 20, 0.85), rgba(0, 0, 0, 0.95)),
+                  url('https://images.unsplash.com/photo-1514525253440-b393452e3383?q=80&w=2000&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    /* GLASS PANEL */
+    .glass-panel {
+      background: rgba(20, 20, 25, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 50px rgba(120, 50, 255, 0.15);
+    }
+
+    /* INPUTS */
+    .dark-input {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      transition: all 0.2s;
+    }
+    .dark-input:focus {
+      background: rgba(0, 0, 0, 0.5);
+      border-color: #a855f7; /* Purple */
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
+    }
+    .dark-input::placeholder { color: #6b7280; }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+    
+    /* Loading Spinner */
+    .spinner {
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top: 3px solid white;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+
+<body class="event-bg min-h-screen flex items-center justify-center p-4">
+
+  <div class="glass-panel w-full max-w-[1400px] h-[90vh] rounded-[2rem] overflow-hidden flex flex-col lg:flex-row relative">
+    
+    <div class="w-full lg:w-[60%] h-full overflow-y-auto p-8 lg:p-10 relative z-10 text-white">
+      
+      <div class="flex justify-between items-center mb-8 sticky top-0 bg-[#131318]/90 backdrop-blur-md py-4 z-20 -mx-4 px-4 border-b border-white/5">
+        <div>
+          <h1 class="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">Organizer Studio</h1>
+          <p class="text-xs text-gray-400 font-mono mt-1 uppercase tracking-widest">Create & Manage Events</p>
+        </div>
+        <button onclick="logout()" class="px-4 py-2 text-xs font-bold bg-white/5 hover:bg-red-500/20 text-gray-300 hover:text-red-400 rounded-lg border border-white/10 transition">
+          LOGOUT
+        </button>
+      </div>
+
+      <div class="space-y-6 max-w-2xl mx-auto pb-10">
+        
+        <div class="space-y-2">
+          <label class="text-xs font-bold text-gray-500 uppercase">Event Title</label>
+          <input id="title" type="text" oninput="updatePreview()" placeholder="e.g. Neon Night Concert" 
+            class="dark-input w-full p-4 rounded-xl text-xl font-bold placeholder-gray-600">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-gray-500 uppercase">Date</label>
+            <input id="date" type="date" oninput="updatePreview()" class="dark-input w-full p-3 rounded-xl text-sm">
+          </div>
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-gray-500 uppercase">Time</label>
+            <input id="time" type="time" oninput="updatePreview()" class="dark-input w-full p-3 rounded-xl text-sm">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-gray-500 uppercase">Location</label>
+            <input id="location" type="text" oninput="updatePreview()" placeholder="e.g. Main Auditorium" 
+              class="dark-input w-full p-3 rounded-xl text-sm">
+          </div>
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-gray-500 uppercase">Club Name</label>
+            <input id="club" type="text" oninput="updatePreview()" placeholder="e.g. Coding Club" 
+              class="dark-input w-full p-3 rounded-xl text-sm">
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-xs font-bold text-gray-500 uppercase">Category</label>
+          <select id="category" onchange="updatePreview()" class="dark-input w-full p-3 rounded-xl text-sm">
+            <option value="General">General Event</option>
+            <option value="Tech">Technical / Hackathon</option>
+            <option value="Cultural">Cultural / Music</option>
+            <option value="Sports">Sports / Fitness</option>
+            <option value="Workshop">Workshop / Seminar</option>
+          </select>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-xs font-bold text-gray-500 uppercase">Description</label>
+          <textarea id="description" rows="3" placeholder="Write a catchy description about the event..." 
+            class="dark-input w-full p-3 rounded-xl text-sm"></textarea>
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex justify-between">
+            <label class="text-xs font-bold text-gray-500 uppercase">Cover Image</label>
+            <button onclick="setRandomImage()" class="text-[10px] text-purple-400 font-bold hover:text-purple-300">🎲 Random Image</button>
+          </div>
+          <input id="imageUrl" type="text" oninput="updatePreview()" placeholder="https://..." 
+            class="dark-input w-full p-3 rounded-xl text-sm font-mono">
+        </div>
+
+        <div class="pt-6">
+          <button id="publishBtn" onclick="addEvent()" 
+            class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg transform transition active:scale-95 flex items-center justify-center gap-2">
+            <span>🚀 Publish Event Live</span>
+          </button>
+          <p id="statusMsg" class="text-center text-xs text-gray-500 mt-2 h-4"></p>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="hidden lg:flex w-[40%] bg-[#050505] relative items-center justify-center border-l border-white/10">
+      
+      <div class="absolute w-[300px] h-[300px] bg-purple-600 rounded-full blur-[120px] opacity-20 animate-pulse"></div>
+
+      <div class="relative transform scale-[0.85] origin-center">
+        <div class="w-[360px] h-[720px] bg-black rounded-[3rem] border-[8px] border-[#1a1a1a] shadow-2xl relative overflow-hidden ring-1 ring-white/10">
+          
+          <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-7 bg-[#1a1a1a] rounded-b-2xl z-30"></div>
+
+          <div class="w-full h-full bg-[#0a0a0a] overflow-y-auto no-scrollbar relative">
+            
+            <div class="h-[280px] relative">
+              <img id="previewImage" src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=800&q=80" 
+                class="w-full h-full object-cover opacity-80">
+              <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent"></div>
+              
+              <div class="absolute top-12 left-6 w-10 h-10 bg-white/10 backdrop-blur rounded-full flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+              </div>
+            </div>
+
+            <div class="px-6 -mt-16 relative z-10">
+              
+              <div class="bg-[#18181b] p-6 rounded-3xl border border-white/5 shadow-xl">
+                
+                <span id="previewCategory" class="inline-block px-3 py-1 rounded-full bg-purple-500/20 text-purple-400 text-[10px] font-bold tracking-wider mb-3 border border-purple-500/30">
+                  GENERAL
+                </span>
+
+                <h2 id="previewTitle" class="text-2xl font-bold text-white leading-tight mb-4">Event Title</h2>
+
+                <div class="space-y-3">
+                  <div class="flex items-center gap-3 text-gray-300">
+                    <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-purple-400">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <div>
+                      <div id="previewDate" class="text-sm font-semibold">Select Date</div>
+                      <div id="previewTime" class="text-xs text-gray-500">--:--</div>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-3 text-gray-300">
+                    <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-purple-400">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    </div>
+                    <div>
+                      <div id="previewLocation" class="text-sm font-semibold">Enter Location</div>
+                      <div class="text-xs text-gray-500">On Campus</div>
+                    </div>
+                  </div>
+                  
+                  <div class="flex items-center gap-3 text-gray-300 pt-2 border-t border-white/5 mt-2">
+                    <div class="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 text-xs font-bold">C</div>
+                    <div class="text-xs">
+                      Organized by <span id="previewClub" class="text-white font-semibold">Club Name</span>
+                    </div>
+                  </div>
+                </div>
+
+                <button class="w-full mt-6 bg-white text-black font-bold py-3 rounded-xl text-sm">Register Now</button>
+
+              </div>
+              
+              <div class="mt-6 mb-10">
+                <h3 class="text-white text-sm font-bold mb-3">Reviews</h3>
+                <div class="bg-[#18181b] p-4 rounded-xl border border-white/5">
+                  <div class="text-xs text-gray-500 italic">No reviews yet. Be the first!</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          
+          <div class="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1 bg-white/20 rounded-full z-30"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // --- 1. FIREBASE CONFIGURATION (Keep your keys!) ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyDdPJJd5bDCPumIxFrxtj176S1Bozseyjk",
+      authDomain: "eventease-202e2.firebaseapp.com",
+      projectId: "eventease-202e2"
+    };
+
+    // Initialize Firebase
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    // --- 2. AUTH CHECK (Redirect if not logged in) ---
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        console.log("No user logged in, redirecting...");
+        window.location.href = "login.html";
+        return;
+      }
+      // Optional: Check role (if you have roles in Firestore)
+      // const doc = await db.collection("users").doc(user.uid).get();
+    });
+
+    // --- 3. LIVE PREVIEW LOGIC ---
+    function updatePreview() {
+      // Get values
+      const title = document.getElementById('title').value;
+      const date = document.getElementById('date').value;
+      const time = document.getElementById('time').value;
+      const loc = document.getElementById('location').value;
+      const club = document.getElementById('club').value;
+      const cat = document.getElementById('category').value;
+      const img = document.getElementById('imageUrl').value;
+
+      // Update Text
+      document.getElementById('previewTitle').innerText = title || "Event Title";
+      document.getElementById('previewDate').innerText = date || "Select Date";
+      document.getElementById('previewTime').innerText = time || "--:--";
+      document.getElementById('previewLocation').innerText = loc || "Enter Location";
+      document.getElementById('previewClub').innerText = club || "Club Name";
+      document.getElementById('previewCategory').innerText = cat || "GENERAL";
+      
+      // Update Image
+      const previewImg = document.getElementById('previewImage');
+      if (img && img.startsWith('http')) {
+        previewImg.src = img;
+      } else {
+        previewImg.src = "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=800&q=80";
+      }
+    }
+
+    // --- 4. RANDOM IMAGE GENERATOR ---
+    function setRandomImage() {
+      const images = [
+        "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?auto=format&fit=crop&w=800&q=80", // Concert
+        "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80", // Meeting
+        "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80", // Business
+        "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?auto=format&fit=crop&w=800&q=80", // Gaming
+        "https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=800&q=80"  // Education
+      ];
+      document.getElementById('imageUrl').value = images[Math.floor(Math.random() * images.length)];
+      updatePreview();
+    }
+
+    // --- 5. PUBLISH EVENT FUNCTION (FIXED) ---
+    async function addEvent() {
+      const btn = document.getElementById('publishBtn');
+      const msg = document.getElementById('statusMsg');
+      
+      // 1. Validation
+      const title = document.getElementById('title').value;
+      const date = document.getElementById('date').value;
+      const time = document.getElementById('time').value;
+      
+      if (!title || !date) {
+        alert("⚠️ Please enter at least a Title and Date!");
+        return;
+      }
+
+      // 2. Set Loading State
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<div class="spinner"></div> Publishing...';
+      btn.disabled = true;
+      msg.innerText = "";
+      msg.className = "text-center text-xs text-gray-500 mt-2";
+
+      try {
+        const user = auth.currentUser;
+        if (!user) throw new Error("You must be logged in.");
+
+        // 3. Prepare Data Object (Matches your requirements)
+        const eventData = {
+          title: title,
+          date: date, // Stored as string YYYY-MM-DD
+          time: time,
+          location: document.getElementById('location').value,
+          club: document.getElementById('club').value,
+          category: document.getElementById('category').value,
+          description: document.getElementById('description').value,
+          imageUrl: document.getElementById('imageUrl').value || "https://via.placeholder.com/500",
+          organizerId: user.uid,
+          organizerEmail: user.email,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          registeredCount: 0 // Initialize count
+        };
+
+        // 4. Send to Firebase
+        await db.collection("events").add(eventData);
+
+        // 5. Success
+        btn.innerHTML = "✅ Published!";
+        btn.classList.remove('from-purple-600', 'to-indigo-600');
+        btn.classList.add('bg-green-600');
+        
+        setTimeout(() => {
+          // Reset Form
+          document.getElementById('title').value = "";
+          document.getElementById('date').value = "";
+          document.getElementById('time').value = "";
+          document.getElementById('location').value = "";
+          document.getElementById('description').value = "";
+          updatePreview();
+          
+          // Reset Button
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+          btn.classList.remove('bg-green-600');
+          btn.classList.add('from-purple-600', 'to-indigo-600');
+          
+          alert("Event created successfully!");
+        }, 1500);
+
+      } catch (error) {
+        console.error("Error adding event: ", error);
+        btn.innerHTML = "❌ Error";
+        msg.innerText = error.message;
+        msg.className = "text-center text-xs text-red-500 mt-2 font-bold";
+        
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }, 3000);
+      }
+    }
+
+    function logout() {
+      auth.signOut().then(() => {
+        window.location.href = "login.html";
+      });
+    }
+  </script>
+</body>
+</html>

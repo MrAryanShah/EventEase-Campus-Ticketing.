@@ -1,0 +1,1870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventEase - College Event Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        .gradient-bg {
+            background: var(--primary-gradient);
+        }
+        
+        .gradient-text {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(0);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 1s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal {
+            display: none;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .tab-active {
+            border-bottom: 3px solid #667eea;
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .btn-primary {
+            background: var(--primary-gradient);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .hero-pattern {
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
+        }
+        
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .scroll-smooth {
+            scroll-behavior: smooth;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-gradient);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5a67d8;
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="scroll-smooth">
+
+    <div id="app-container">
+        <!-- Home Page -->
+        <div id="home-page" class="min-h-screen">
+            <!-- Navigation -->
+            <nav class="fixed top-0 w-full z-50 glass-effect">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between items-center py-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-calendar-alt text-white text-lg"></i>
+    </div>
+                            <h1 class="text-2xl font-bold text-white">EventEase</h1>
+                        </div>
+                        <div class="hidden md:flex items-center space-x-8">
+                            <a href="#features" class="text-white hover:text-purple-200 transition-colors">Features</a>
+                            <a href="#about" class="text-white hover:text-purple-200 transition-colors">About</a>
+                            <a href="#contact" class="text-white hover:text-purple-200 transition-colors">Contact</a>
+                            <button id="get-started-btn" class="bg-white text-purple-600 px-6 py-2 rounded-full font-semibold hover:bg-purple-50 transition-all">
+                                Get Started
+                            </button>
+                        </div>
+                        <button id="mobile-menu-btn" class="md:hidden text-white">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Hero Section -->
+            <section class="relative min-h-screen flex items-center justify-center hero-pattern">
+                <div class="absolute inset-0 bg-gradient-to-br from-purple-600/20 via-blue-600/20 to-pink-600/20"></div>
+                <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <div class="fade-in">
+                        <h1 class="hero-title text-5xl md:text-7xl font-bold text-white mb-6 text-shadow">
+                            Discover Amazing
+                            <span class="gradient-text bg-gradient-to-r from-yellow-400 to-pink-400 bg-clip-text text-transparent">
+                                College Events
+                            </span>
+                        </h1>
+                        <p class="hero-subtitle text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto">
+                            Connect with your campus community through exciting events, workshops, and activities. 
+                            Register, bookmark, and never miss out on the fun!
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                            <button id="student-login-btn" class="btn-primary text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg">
+                                <i class="fas fa-graduation-cap mr-2"></i>
+                                I'm a Student
+                            </button>
+                            <button id="organizer-login-btn" class="bg-white/20 backdrop-blur-sm text-white px-8 py-4 rounded-full text-lg font-semibold border border-white/30 hover:bg-white/30 transition-all">
+                                <i class="fas fa-users mr-2"></i>
+                                I'm an Organizer
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Floating Elements -->
+                    <div class="absolute top-20 left-10 floating">
+                        <div class="w-20 h-20 bg-gradient-to-r from-pink-400 to-purple-400 rounded-full opacity-20"></div>
+                    </div>
+                    <div class="absolute top-40 right-20 floating" style="animation-delay: 1s;">
+                        <div class="w-16 h-16 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full opacity-20"></div>
+                    </div>
+                    <div class="absolute bottom-40 left-20 floating" style="animation-delay: 2s;">
+                        <div class="w-24 h-24 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full opacity-20"></div>
+                    </div>
+                </div>
+                
+                <!-- Scroll Indicator -->
+                <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
+                    <i class="fas fa-chevron-down text-2xl"></i>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section id="features" class="py-20 bg-gray-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-16">
+                        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6" data-aos="fade-up">
+                            Why Choose <span class="gradient-text">EventEase</span>?
+                        </h2>
+                        <p class="text-xl text-gray-600 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="200">
+                            We've designed the perfect platform for college event management with features that make organizing and attending events effortless.
+                        </p>
+                    </div>
+                    
+                    <div class="feature-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Feature 1 -->
+                        <div class="feature-card rounded-2xl p-8 text-center" data-aos="fade-up" data-aos-delay="100">
+                            <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                                <i class="fas fa-calendar-check text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-4">Easy Registration</h3>
+                            <p class="text-gray-600">Register for events with just one click. Get instant confirmation and never miss important updates.</p>
+                        </div>
+                        
+                        <!-- Feature 2 -->
+                        <div class="feature-card rounded-2xl p-8 text-center" data-aos="fade-up" data-aos-delay="200">
+                            <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                                <i class="fas fa-bookmark text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-4">Smart Bookmarks</h3>
+                            <p class="text-gray-600">Save events you're interested in and access them anytime from your personal dashboard.</p>
+                        </div>
+                        
+                        <!-- Feature 3 -->
+                        <div class="feature-card rounded-2xl p-8 text-center" data-aos="fade-up" data-aos-delay="300">
+                            <div class="w-16 h-16 bg-gradient-to-r from-pink-500 to-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                                <i class="fas fa-filter text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-4">Smart Filtering</h3>
+                            <p class="text-gray-600">Find events by category, date, or club. Discover exactly what you're looking for.</p>
+                        </div>
+                        
+                        <!-- Feature 4 -->
+                        <div class="feature-card rounded-2xl p-8 text-center" data-aos="fade-up" data-aos-delay="400">
+                            <div class="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                                <i class="fas fa-users text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-4">Community Building</h3>
+                            <p class="text-gray-600">Connect with fellow students and build lasting relationships through shared experiences.</p>
+                        </div>
+                        
+                        <!-- Feature 5 -->
+                        <div class="feature-card rounded-2xl p-8 text-center" data-aos="fade-up" data-aos-delay="500">
+                            <div class="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                                <i class="fas fa-chart-line text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-4">Analytics Dashboard</h3>
+                            <p class="text-gray-600">Organizers get detailed insights into event performance and attendee engagement.</p>
+                        </div>
+                        
+                        <!-- Feature 6 -->
+                        <div class="feature-card rounded-2xl p-8 text-center" data-aos="fade-up" data-aos-delay="600">
+                            <div class="w-16 h-16 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                                <i class="fas fa-mobile-alt text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-4">Mobile Friendly</h3>
+                            <p class="text-gray-600">Access EventEase from any device. Responsive design ensures great experience everywhere.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stats Section -->
+            <section class="py-20 gradient-bg">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+                        <div class="text-white" data-aos="fade-up" data-aos-delay="100">
+                            <div class="text-4xl md:text-5xl font-bold mb-2">500+</div>
+                            <div class="text-lg opacity-90">Events Hosted</div>
+                        </div>
+                        <div class="text-white" data-aos="fade-up" data-aos-delay="200">
+                            <div class="text-4xl md:text-5xl font-bold mb-2">10K+</div>
+                            <div class="text-lg opacity-90">Students Registered</div>
+                        </div>
+                        <div class="text-white" data-aos="fade-up" data-aos-delay="300">
+                            <div class="text-4xl md:text-5xl font-bold mb-2">50+</div>
+                            <div class="text-lg opacity-90">Colleges</div>
+                        </div>
+                        <div class="text-white" data-aos="fade-up" data-aos-delay="400">
+                            <div class="text-4xl md:text-5xl font-bold mb-2">98%</div>
+                            <div class="text-lg opacity-90">Satisfaction Rate</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- About Section -->
+            <section id="about" class="py-20 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div data-aos="fade-right">
+                            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                                Built for <span class="gradient-text">Modern</span> Campus Life
+                            </h2>
+                            <p class="text-lg text-gray-600 mb-8">
+                                EventEase was created by students, for students. We understand the challenges of campus event management 
+                                and have built a solution that makes organizing and attending events seamless and enjoyable.
+                            </p>
+                            <div class="space-y-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-check text-green-600"></i>
+                                    </div>
+                                    <span class="text-gray-700">Real-time event updates</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-check text-green-600"></i>
+                                    </div>
+                                    <span class="text-gray-700">Secure user authentication</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-check text-green-600"></i>
+                                    </div>
+                                    <span class="text-gray-700">Cloud-based data storage</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div data-aos="fade-left">
+                            <div class="relative">
+                                <div class="w-full h-96 bg-gradient-to-br from-purple-400 to-pink-400 rounded-3xl flex items-center justify-center">
+                                    <i class="fas fa-university text-white text-8xl"></i>
+                                </div>
+                                <div class="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full pulse-animation"></div>
+                                <div class="absolute -bottom-4 -left-4 w-20 h-20 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full pulse-animation" style="animation-delay: 1s;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CTA Section -->
+            <section class="py-20 bg-gradient-to-r from-purple-600 to-blue-600">
+                <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+                    <h2 class="text-4xl md:text-5xl font-bold text-white mb-6" data-aos="fade-up">
+                        Ready to Transform Your Campus Events?
+                    </h2>
+                    <p class="text-xl text-white/90 mb-8" data-aos="fade-up" data-aos-delay="200">
+                        Join thousands of students and organizers who are already using EventEase to create amazing campus experiences.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center" data-aos="fade-up" data-aos-delay="400">
+                        <button id="cta-student-btn" class="bg-white text-purple-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-purple-50 transition-all shadow-lg">
+                            <i class="fas fa-rocket mr-2"></i>
+                            Start as Student
+                        </button>
+                        <button id="cta-organizer-btn" class="bg-white/20 backdrop-blur-sm text-white px-8 py-4 rounded-full text-lg font-semibold border border-white/30 hover:bg-white/30 transition-all">
+                            <i class="fas fa-tools mr-2"></i>
+                            Start as Organizer
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer id="contact" class="bg-gray-900 text-white py-16">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                        <div class="col-span-1 md:col-span-2">
+                            <div class="flex items-center space-x-3 mb-6">
+                                <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-calendar-alt text-white text-lg"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold">EventEase</h3>
+                            </div>
+                            <p class="text-gray-400 mb-6 max-w-md">
+                                The ultimate platform for college event management. Connecting students, organizers, and communities through amazing events.
+                            </p>
+                            <div class="flex space-x-4">
+                                <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                                <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors">
+                                    <i class="fab fa-facebook"></i>
+                                </a>
+                                <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors">
+                                    <i class="fab fa-linkedin"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold mb-4">Product</h4>
+                            <ul class="space-y-2 text-gray-400">
+                                <li><a href="#" class="hover:text-white transition-colors">Features</a></li>
+                                <li><a href="#" class="hover:text-white transition-colors">Pricing</a></li>
+                                <li><a href="#" class="hover:text-white transition-colors">API</a></li>
+                                <li><a href="#" class="hover:text-white transition-colors">Documentation</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold mb-4">Support</h4>
+                            <ul class="space-y-2 text-gray-400">
+                                <li><a href="#" class="hover:text-white transition-colors">Help Center</a></li>
+                                <li><a href="#" class="hover:text-white transition-colors">Contact Us</a></li>
+                                <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                                <li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
+                        <p>&copy; 2024 EventEase. All rights reserved. Made with ❤️ for students everywhere.</p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+
+        <!-- Login/Signup Pages -->
+        <div id="auth-pages" class="hidden min-h-screen gradient-bg flex items-center justify-center p-4">
+            <!-- Auth content will be dynamically inserted here -->
+        </div>
+
+        <!-- Dashboard Pages -->
+        <div id="dashboard-pages" class="hidden min-h-screen bg-gray-100">
+            <!-- Dashboard content will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <!-- Modals Container -->
+    <div id="modal-container"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-8 flex flex-col items-center">
+            <div class="loading-spinner mb-4"></div>
+            <p class="text-gray-600">Loading...</p>
+        </div>
+    </div>
+
+    <script type="module">
+        // Firebase Imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            onAuthStateChanged, 
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            getDoc, 
+            collection, 
+            addDoc, 
+            getDocs, 
+            updateDoc, 
+            deleteDoc,
+            arrayUnion, 
+            arrayRemove,
+            query,
+            where,
+            Timestamp,
+            onSnapshot 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Initialize AOS (Animate On Scroll)
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+            offset: 100
+        });
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDdPJJd5bDCPumIxFrxtj176S1Bozseyjk",
+            authDomain: "eventease-202e2.firebaseapp.com",
+            projectId: "eventease-202e2",
+            storageBucket: "eventease-202e2.appspot.com",
+            messagingSenderId: "468741602983",
+            appId: "1:468741602983:web:5ae85e55ef8105424be582",
+            measurementId: "G-CT5H4YS8R2"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // DOM Elements
+        const appContainer = document.getElementById('app-container');
+        const homePage = document.getElementById('home-page');
+        const authPages = document.getElementById('auth-pages');
+        const dashboardPages = document.getElementById('dashboard-pages');
+        const modalContainer = document.getElementById('modal-container');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        
+        // State Management
+        let currentUserData = null;
+        let unsubscribeUserListener = null;
+        let currentView = 'events';
+        let events = [];
+        let filteredEvents = [];
+        let myRegistrations = [];
+        let myBookmarks = [];
+
+        // Utility Functions
+        function showLoading() {
+            loadingOverlay.classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            loadingOverlay.classList.add('hidden');
+        }
+
+        function showCustomAlert(message, type = 'error') {
+            const alertId = 'custom-alert-modal';
+            if (document.getElementById(alertId)) return;
+
+            const bgColor = type === 'success' ? 'bg-green-100' : 'bg-red-100';
+            const borderColor = type === 'success' ? 'border-green-500' : 'border-red-500';
+            const textColor = type === 'success' ? 'text-green-800' : 'text-red-800';
+
+            const alertHTML = `
+                <div id="${alertId}" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div class="bg-white rounded-lg shadow-xl p-6 w-11/12 md:w-1/3 border-l-4 ${borderColor}">
+                        <div class="flex flex-col">
+                            <p class="${textColor}">${message}</p>
+                            <button onclick="document.getElementById('${alertId}').remove()" class="mt-4 ml-auto bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition">OK</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            modalContainer.innerHTML = alertHTML;
+        }
+
+        // Navigation Functions
+        function showHomePage() {
+            homePage.classList.remove('hidden');
+            authPages.classList.add('hidden');
+            dashboardPages.classList.add('hidden');
+        }
+
+        function showAuthPages() {
+            homePage.classList.add('hidden');
+            authPages.classList.remove('hidden');
+            dashboardPages.classList.add('hidden');
+        }
+
+        function showDashboardPages() {
+            homePage.classList.add('hidden');
+            authPages.classList.add('hidden');
+            dashboardPages.classList.remove('hidden');
+        }
+
+        // Auth State Listener
+        onAuthStateChanged(auth, user => {
+            if (unsubscribeUserListener) {
+                unsubscribeUserListener();
+                unsubscribeUserListener = null;
+            }
+            currentUserData = null;
+
+            if (user) {
+                const userDocRef = doc(db, "users", user.uid);
+                unsubscribeUserListener = onSnapshot(userDocRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        currentUserData = { uid: user.uid, ...docSnap.data() };
+                        showDashboardPages();
+                        renderDashboard();
+                    } else {
+                        console.log("User profile not found, waiting for creation...");
+                    }
+                }, (error) => {
+                    console.error("Error listening to user document:", error);
+                    showAuthPages();
+                });
+            } else {
+                showHomePage();
+            }
+        });
+
+        // Home Page Event Listeners
+        document.getElementById('get-started-btn').addEventListener('click', () => {
+            showAuthPages();
+            renderLogin(false);
+        });
+
+        document.getElementById('student-login-btn').addEventListener('click', () => {
+            showAuthPages();
+            renderLogin(false);
+        });
+
+        document.getElementById('organizer-login-btn').addEventListener('click', () => {
+            showAuthPages();
+            renderLogin(true);
+        });
+
+        document.getElementById('cta-student-btn').addEventListener('click', () => {
+            showAuthPages();
+            renderLogin(false);
+        });
+
+        document.getElementById('cta-organizer-btn').addEventListener('click', () => {
+            showAuthPages();
+            renderLogin(true);
+        });
+
+        // Auth Functions
+        function renderLogin(isOrganizerLogin = false) {
+            const loginType = isOrganizerLogin ? 'Organizer' : 'Student';
+            const switchType = isOrganizerLogin ? 'Student' : 'Organizer';
+            
+            authPages.innerHTML = `
+                <div class="w-full max-w-md bg-white/95 backdrop-blur-sm p-8 rounded-2xl shadow-2xl">
+                    <div class="text-center mb-8">
+                        <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-calendar-alt text-white text-2xl"></i>
+                        </div>
+                        <h1 class="text-3xl font-bold text-gray-800 mb-2">Welcome Back!</h1>
+                        <p class="text-gray-600">Sign in to your ${loginType} account</p>
+                        </div>
+                    
+                    <form id="login-form" class="space-y-6">
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-envelope mr-2 text-purple-500"></i>Email Address
+                            </label>
+                            <input type="email" id="email" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all" required>
+                        </div>
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-lock mr-2 text-purple-500"></i>Password
+                            </label>
+                            <input type="password" id="password" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all" required>
+                        </div>
+                        <button type="submit" class="w-full btn-primary text-white py-3 rounded-xl font-semibold text-lg">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Sign In
+                        </button>
+                    </form>
+                    
+                    <div class="mt-6 text-center space-y-3">
+                        <p class="text-sm text-gray-600">
+                            Don't have an account? 
+                            <a href="#" id="signup-link" class="text-purple-600 font-semibold hover:underline">Create one</a>
+                        </p>
+                        <p class="text-sm text-gray-600">
+                            <a href="#" id="switch-login" class="text-blue-600 font-semibold hover:underline">Switch to ${switchType} Login</a>
+                        </p>
+                        <button id="back-to-home" class="text-gray-500 hover:text-gray-700 transition-colors">
+                            <i class="fas fa-arrow-left mr-2"></i>Back to Home
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('login-form').addEventListener('submit', e => handleLogin(e, isOrganizerLogin));
+            document.getElementById('signup-link').addEventListener('click', e => {
+                e.preventDefault();
+                renderSignUp(isOrganizerLogin);
+            });
+            document.getElementById('switch-login').addEventListener('click', e => {
+                e.preventDefault();
+                renderLogin(!isOrganizerLogin);
+            });
+            document.getElementById('back-to-home').addEventListener('click', () => showHomePage());
+        }
+
+        function renderSignUp(isOrganizerSignUp = false) {
+            const userType = isOrganizerSignUp ? 'Organizer' : 'Student';
+            authPages.innerHTML = `
+                <div class="w-full max-w-md bg-white/95 backdrop-blur-sm p-8 rounded-2xl shadow-2xl">
+                    <div class="text-center mb-8">
+                        <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-user-plus text-white text-2xl"></i>
+                        </div>
+                        <h1 class="text-3xl font-bold text-gray-800 mb-2">Join EventEase</h1>
+                        <p class="text-gray-600">Create your ${userType} account</p>
+                        </div>
+                    
+                    <form id="signup-form" class="space-y-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-user mr-2 text-purple-500"></i>Full Name
+                            </label>
+                            <input type="text" id="name" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all" required>
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-envelope mr-2 text-purple-500"></i>Email Address
+                            </label>
+                            <input type="email" id="email" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all" required>
+                        </div>
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-lock mr-2 text-purple-500"></i>Password
+                            </label>
+                            <input type="password" id="password" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all" required>
+                        </div>
+                        <button type="submit" class="w-full btn-primary text-white py-3 rounded-xl font-semibold text-lg">
+                            <i class="fas fa-user-plus mr-2"></i>Create Account
+                        </button>
+                    </form>
+                    
+                    <div class="mt-6 text-center space-y-3">
+                        <p class="text-sm text-gray-600">
+                            Already have an account? 
+                            <a href="#" id="login-link" class="text-purple-600 font-semibold hover:underline">Sign In</a>
+                        </p>
+                        <button id="back-to-home-signup" class="text-gray-500 hover:text-gray-700 transition-colors">
+                            <i class="fas fa-arrow-left mr-2"></i>Back to Home
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('signup-form').addEventListener('submit', e => handleSignUp(e, isOrganizerSignUp));
+            document.getElementById('login-link').addEventListener('click', e => {
+                e.preventDefault();
+                renderLogin(isOrganizerSignUp);
+            });
+            document.getElementById('back-to-home-signup').addEventListener('click', () => showHomePage());
+        }
+
+        // Event Handlers
+        async function handleLogin(e, isOrganizer) {
+            e.preventDefault();
+            showLoading();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
+                
+                if (!userDoc.exists()) {
+                    showCustomAlert("User profile not found. Please contact support.");
+                    signOut(auth);
+                return;
+            }
+            
+                const userRole = userDoc.data().role;
+                const expectedRole = isOrganizer ? 'organizer' : 'student';
+
+                if (userRole !== expectedRole) {
+                    showCustomAlert(`Incorrect login type. Please use the ${userRole} login.`);
+                    signOut(auth);
+                    return;
+                }
+            } catch (error) {
+                console.error("Login Error:", error);
+                showCustomAlert(error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        async function handleSignUp(e, isOrganizer) {
+            e.preventDefault();
+            showLoading();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const role = isOrganizer ? 'organizer' : 'student';
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                await setDoc(doc(db, "users", user.uid), {
+                    name: name,
+                    email: email,
+                    role: role,
+                    registeredEvents: [],
+                    bookmarkedEvents: []
+                });
+                
+                showCustomAlert('Account created successfully! Welcome to EventEase!', 'success');
+            } catch (error) {
+                console.error("Sign Up Error:", error);
+                showCustomAlert(error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function handleLogout() {
+            showLoading();
+            await signOut(auth);
+            hideLoading();
+        }
+
+        // Dashboard Functions - Complete Implementation
+        async function renderDashboard() {
+            if (!currentUserData) return;
+            
+            const isOrganizer = currentUserData.role === 'organizer';
+            
+            if (isOrganizer) {
+                await renderOrganizerDashboard();
+            } else {
+                await renderStudentDashboard();
+            }
+        }
+
+        // Student Dashboard
+        async function renderStudentDashboard() {
+            await fetchEvents();
+            await fetchMyRegistrations();
+            await fetchMyBookmarks();
+            
+            dashboardPages.innerHTML = `
+                <div class="min-h-screen bg-gray-50">
+                    <!-- Header -->
+                    <header class="bg-white shadow-sm border-b sticky top-0 z-40">
+                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div class="flex justify-between items-center py-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-calendar-alt text-white"></i>
+                                    </div>
+                                    <h1 class="text-2xl font-bold text-gray-900">EventEase</h1>
+                                    <span class="px-3 py-1 bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800 text-sm font-medium rounded-full">
+                                        Student Dashboard
+                                    </span>
+                                </div>
+                        <div class="flex items-center space-x-4">
+                                    <span class="text-gray-600">Welcome, ${currentUserData.name}</span>
+                                    <button id="logout-btn" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all">
+                                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    <!-- Navigation Tabs -->
+                    <div class="bg-white border-b">
+                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <nav class="flex space-x-8">
+                                <button id="tab-events" class="tab-active py-4 px-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                                    <i class="fas fa-calendar mr-2"></i>All Events
+                                </button>
+                                <button id="tab-my-registrations" class="py-4 px-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                                    <i class="fas fa-ticket-alt mr-2"></i>My Registrations
+                                </button>
+                                <button id="tab-bookmarks" class="py-4 px-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                                    <i class="fas fa-bookmark mr-2"></i>Bookmarks
+                                </button>
+                            </nav>
+                        </div>
+                    </div>
+
+                    <!-- Main Content -->
+                    <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+                        <!-- Events Tab Content -->
+                        <div id="events-content" class="tab-content">
+                    <!-- Filters -->
+                            <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Filter Events</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                                        <select id="category-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <option value="">All Categories</option>
+                                            <option value="Academic">Academic</option>
+                                            <option value="Sports">Sports</option>
+                            <option value="Cultural">Cultural</option>
+                                            <option value="Technical">Technical</option>
+                                            <option value="Social">Social</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Club</label>
+                                        <select id="club-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                            <option value="">All Clubs</option>
+                                            <option value="Computer Science">Computer Science</option>
+                                            <option value="Drama">Drama</option>
+                                            <option value="Music">Music</option>
+                            <option value="Sports">Sports</option>
+                                            <option value="Debate">Debate</option>
+                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
+                                        <select id="date-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                            <option value="">All Dates</option>
+                                            <option value="upcoming">Upcoming</option>
+                                            <option value="today">Today</option>
+                                            <option value="this-week">This Week</option>
+                                            <option value="this-month">This Month</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex items-end">
+                                        <button id="apply-filters" class="w-full bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors">
+                                            <i class="fas fa-filter mr-2"></i>Apply Filters
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <button id="clear-filters" class="text-gray-500 hover:text-gray-700 text-sm">
+                                        <i class="fas fa-times mr-1"></i>Clear Filters
+                                    </button>
+                                </div>
+                    </div>
+
+                            <!-- Events Grid -->
+                            <div id="events-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <!-- Events will be dynamically loaded here -->
+                            </div>
+                        </div>
+
+                        <!-- My Registrations Tab Content -->
+                        <div id="my-registrations-content" class="tab-content hidden">
+                            <div class="bg-white rounded-lg shadow-sm p-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">My Event Registrations</h3>
+                                <div id="registrations-list" class="space-y-4">
+                                    <!-- Registrations will be dynamically loaded here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bookmarks Tab Content -->
+                        <div id="bookmarks-content" class="tab-content hidden">
+                            <div class="bg-white rounded-lg shadow-sm p-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">My Bookmarked Events</h3>
+                                <div id="bookmarks-list" class="space-y-4">
+                                    <!-- Bookmarks will be dynamically loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            `;
+            
+            // Add event listeners
+            setupStudentEventListeners();
+            renderEventCards();
+            renderMyRegistrations();
+            renderMyBookmarks();
+        }
+
+        // Organizer Dashboard
+        async function renderOrganizerDashboard() {
+            await fetchEvents();
+            
+            dashboardPages.innerHTML = `
+                <div class="min-h-screen bg-gray-50">
+                    <!-- Header -->
+                    <header class="bg-white shadow-sm border-b sticky top-0 z-40">
+                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div class="flex justify-between items-center py-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-calendar-alt text-white"></i>
+                                    </div>
+                                    <h1 class="text-2xl font-bold text-gray-900">EventEase</h1>
+                                    <span class="px-3 py-1 bg-gradient-to-r from-green-100 to-teal-100 text-green-800 text-sm font-medium rounded-full">
+                                        Organizer Dashboard
+                                    </span>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-gray-600">Welcome, ${currentUserData.name}</span>
+                                    <button id="logout-btn" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all">
+                                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    <!-- Navigation Tabs -->
+                    <div class="bg-white border-b">
+                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <nav class="flex space-x-8">
+                                <button id="tab-my-events" class="tab-active py-4 px-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                                    <i class="fas fa-calendar mr-2"></i>My Events
+                                </button>
+                                <button id="tab-add-event" class="py-4 px-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                                    <i class="fas fa-plus mr-2"></i>Add Event
+                                </button>
+                                <button id="tab-registrations" class="py-4 px-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                                    <i class="fas fa-users mr-2"></i>Registrations
+                                </button>
+                            </nav>
+                        </div>
+                    </div>
+
+                    <!-- Main Content -->
+                    <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+                        <!-- My Events Tab Content -->
+                        <div id="my-events-content" class="tab-content">
+                            <div class="bg-white rounded-lg shadow-sm p-6">
+                                <div class="flex justify-between items-center mb-6">
+                                    <h3 class="text-lg font-semibold text-gray-900">My Events</h3>
+                                    <button id="add-event-btn" class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors">
+                                        <i class="fas fa-plus mr-2"></i>Add New Event
+                                    </button>
+                                </div>
+                                <div id="my-events-list" class="space-y-4">
+                                    <!-- Events will be dynamically loaded here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Add Event Tab Content -->
+                        <div id="add-event-content" class="tab-content hidden">
+                            <div class="bg-white rounded-lg shadow-sm p-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-6">Add New Event</h3>
+                                <form id="add-event-form" class="space-y-6">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Event Title</label>
+                                            <input type="text" id="event-title" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                                            <select id="event-category" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" required>
+                                                <option value="">Select Category</option>
+                                                <option value="Academic">Academic</option>
+                                                <option value="Sports">Sports</option>
+                                                <option value="Cultural">Cultural</option>
+                                                <option value="Technical">Technical</option>
+                                                <option value="Social">Social</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Club</label>
+                                            <input type="text" id="event-club" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                                            <input type="date" id="event-date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Time</label>
+                                            <input type="time" id="event-time" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                                            <input type="text" id="event-location" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Event Image URL</label>
+                                            <input type="url" id="event-image" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="https://example.com/image.jpg">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                                        <textarea id="event-description" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" required></textarea>
+                                    </div>
+                                    <div class="flex justify-end space-x-4">
+                                        <button type="button" id="cancel-add-event" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
+                                            Cancel
+                                        </button>
+                                        <button type="submit" class="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors">
+                                            <i class="fas fa-plus mr-2"></i>Add Event
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Registrations Tab Content -->
+                        <div id="registrations-content" class="tab-content hidden">
+                            <div class="bg-white rounded-lg shadow-sm p-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Event Registrations</h3>
+                                <div id="registrations-overview" class="space-y-4">
+                                    <!-- Registration overview will be dynamically loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            `;
+            
+            // Add event listeners
+            setupOrganizerEventListeners();
+            renderMyEvents();
+        }
+
+        // Data Fetching Functions
+        async function fetchEvents() {
+            try {
+                const eventsRef = collection(db, "events");
+                const snapshot = await getDocs(eventsRef);
+                events = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data(),
+                    date: doc.data().date?.toDate() || new Date()
+                }));
+                filteredEvents = [...events];
+            } catch (error) {
+                console.error("Error fetching events:", error);
+                showCustomAlert("Failed to fetch events");
+            }
+        }
+
+        async function fetchMyRegistrations() {
+            if (!currentUserData) return;
+            try {
+                const registrationsRef = collection(db, "registrations");
+                const q = query(registrationsRef, where("userId", "==", currentUserData.uid));
+                const snapshot = await getDocs(q);
+                myRegistrations = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+            } catch (error) {
+                console.error("Error fetching registrations:", error);
+            }
+        }
+
+        async function fetchMyBookmarks() {
+            if (!currentUserData) return;
+            try {
+                const userDoc = await getDoc(doc(db, "users", currentUserData.uid));
+                if (userDoc.exists()) {
+                    myBookmarks = userDoc.data().bookmarkedEvents || [];
+                }
+            } catch (error) {
+                console.error("Error fetching bookmarks:", error);
+            }
+        }
+
+        // Event Rendering Functions
+        function renderEventCards() {
+            const eventsGrid = document.getElementById('events-grid');
+            if (!eventsGrid) return;
+            
+            if (filteredEvents.length === 0) {
+                eventsGrid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-calendar-times text-6xl text-gray-300 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-500 mb-2">No Events Found</h3>
+                        <p class="text-gray-400">Try adjusting your filters or check back later for new events.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            eventsGrid.innerHTML = filteredEvents.map(event => createEventCard(event)).join('');
+        }
+
+        function createEventCard(event) {
+            const eventDate = new Date(event.date);
+            const isBookmarked = myBookmarks.some(b => b.id === event.id);
+            const isRegistered = myRegistrations.some(r => r.eventId === event.id);
+            const isPastEvent = eventDate < new Date();
+
+                return `
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 card-hover overflow-hidden">
+                    ${event.imageUrl ? `
+                        <div class="h-48 bg-gray-200 overflow-hidden">
+                            <img src="${event.imageUrl}" alt="${event.title}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" onerror="this.style.display='none'">
+                        </div>
+                    ` : `
+                        <div class="h-48 bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center">
+                            <i class="fas fa-calendar-alt text-4xl text-purple-300"></i>
+                        </div>
+                    `}
+                    
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">${event.title}</h3>
+                                <div class="flex items-center text-sm text-gray-500 mb-2">
+                                    <i class="fas fa-tag mr-2"></i>
+                                    <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs">${event.category}</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-500 mb-2">
+                                    <i class="fas fa-users mr-2"></i>
+                                    <span>${event.club}</span>
+                                </div>
+                            </div>
+                            <button class="bookmark-btn ${isBookmarked ? 'text-yellow-500' : 'text-gray-300'} hover:text-yellow-500 transition-colors" data-event-id="${event.id}">
+                                <i class="fas fa-bookmark"></i>
+                                </button>
+                        </div>
+                        
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-3">${event.description}</p>
+                        
+                        <div class="space-y-2 mb-4">
+                            <div class="flex items-center text-sm text-gray-500">
+                                <i class="fas fa-calendar mr-2"></i>
+                                <span>${eventDate.toLocaleDateString()}</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <i class="fas fa-clock mr-2"></i>
+                                <span>${event.time}</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <i class="fas fa-map-marker-alt mr-2"></i>
+                                <span>${event.location}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex space-x-2">
+                            ${isPastEvent ? 
+                                '<span class="flex-1 text-center py-2 px-4 bg-gray-100 text-gray-500 rounded-md text-sm">Event Ended</span>' :
+                                    isRegistered ?
+                                    '<span class="flex-1 text-center py-2 px-4 bg-green-100 text-green-800 rounded-md text-sm"><i class="fas fa-check mr-1"></i>Registered</span>' :
+                                    `<button class="flex-1 bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors text-sm register-btn" data-event-id="${event.id}">
+                                        <i class="fas fa-ticket-alt mr-1"></i>Register
+                                    </button>`
+                            }
+                            <button class="bg-gray-100 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-200 transition-colors text-sm view-details-btn" data-event-id="${event.id}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                `;
+        }
+
+        function renderMyRegistrations() {
+            const registrationsList = document.getElementById('registrations-list');
+            if (!registrationsList) return;
+
+            if (myRegistrations.length === 0) {
+                registrationsList.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-ticket-alt text-4xl text-gray-300 mb-4"></i>
+                        <h3 class="text-lg font-semibold text-gray-500 mb-2">No Registrations Yet</h3>
+                        <p class="text-gray-400">Register for events to see them here.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            registrationsList.innerHTML = myRegistrations.map(registration => {
+                const event = events.find(e => e.id === registration.eventId);
+                if (!event) return '';
+
+                const eventDate = new Date(event.date);
+                const isPastEvent = eventDate < new Date();
+
+                return `
+                    <div class="bg-white border border-gray-200 rounded-lg p-4">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-gray-900">${event.title}</h4>
+                                <p class="text-sm text-gray-500 mt-1">${event.club} • ${event.category}</p>
+                                <div class="flex items-center text-sm text-gray-500 mt-2">
+                                    <i class="fas fa-calendar mr-2"></i>
+                                    <span>${eventDate.toLocaleDateString()} at ${event.time}</span>
+                            </div>
+                                <div class="flex items-center text-sm text-gray-500 mt-1">
+                                    <i class="fas fa-map-marker-alt mr-2"></i>
+                                    <span>${event.location}</span>
+                                    </div>
+                                    </div>
+                            <div class="text-right">
+                                <span class="px-3 py-1 rounded-full text-xs font-medium ${isPastEvent ? 'bg-gray-100 text-gray-600' : 'bg-green-100 text-green-800'}">
+                                    ${isPastEvent ? 'Completed' : 'Upcoming'}
+                                </span>
+                                <p class="text-xs text-gray-500 mt-2">Registration ID: ${registration.id.slice(-8)}</p>
+                                    </div>
+                                    </div>
+                                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderMyBookmarks() {
+            const bookmarksList = document.getElementById('bookmarks-list');
+            if (!bookmarksList) return;
+
+            if (myBookmarks.length === 0) {
+                bookmarksList.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-bookmark text-4xl text-gray-300 mb-4"></i>
+                        <h3 class="text-lg font-semibold text-gray-500 mb-2">No Bookmarks Yet</h3>
+                        <p class="text-gray-400">Bookmark events you're interested in to see them here.</p>
+                                    </div>
+                `;
+                return;
+            }
+
+            bookmarksList.innerHTML = myBookmarks.map(bookmark => {
+                const event = events.find(e => e.id === bookmark.id);
+                if (!event) return '';
+
+                const eventDate = new Date(event.date);
+                const isPastEvent = eventDate < new Date();
+
+                return `
+                    <div class="bg-white border border-gray-200 rounded-lg p-4">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-gray-900">${event.title}</h4>
+                                <p class="text-sm text-gray-500 mt-1">${event.club} • ${event.category}</p>
+                                <p class="text-gray-600 text-sm mt-2 line-clamp-2">${event.description}</p>
+                                <div class="flex items-center text-sm text-gray-500 mt-2">
+                                    <i class="fas fa-calendar mr-2"></i>
+                                    <span>${eventDate.toLocaleDateString()} at ${event.time}</span>
+                                    </div>
+                                    </div>
+                            <div class="text-right">
+                                <button class="text-red-500 hover:text-red-700 mb-2 remove-bookmark-btn" data-event-id="${event.id}">
+                                    <i class="fas fa-bookmark"></i>
+                                </button>
+                                <span class="px-3 py-1 rounded-full text-xs font-medium ${isPastEvent ? 'bg-gray-100 text-gray-600' : 'bg-blue-100 text-blue-800'}">
+                                    ${isPastEvent ? 'Past Event' : 'Upcoming'}
+                                </span>
+                                </div>
+                                </div>
+                        </div>
+                `;
+            }).join('');
+        }
+
+        function renderMyEvents() {
+            const myEventsList = document.getElementById('my-events-list');
+            if (!myEventsList) return;
+
+            const myEvents = events.filter(event => event.organizerId === currentUserData.uid);
+
+            if (myEvents.length === 0) {
+                myEventsList.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-calendar-plus text-4xl text-gray-300 mb-4"></i>
+                        <h3 class="text-lg font-semibold text-gray-500 mb-2">No Events Created Yet</h3>
+                        <p class="text-gray-400">Create your first event to get started.</p>
+                </div>
+            `;
+                return;
+            }
+
+            myEventsList.innerHTML = myEvents.map(event => {
+                const eventDate = new Date(event.date);
+                const isPastEvent = eventDate < new Date();
+
+                return `
+                    <div class="bg-white border border-gray-200 rounded-lg p-4">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-gray-900">${event.title}</h4>
+                                <p class="text-sm text-gray-500 mt-1">${event.club} • ${event.category}</p>
+                                <p class="text-gray-600 text-sm mt-2 line-clamp-2">${event.description}</p>
+                                <div class="flex items-center text-sm text-gray-500 mt-2">
+                                    <i class="fas fa-calendar mr-2"></i>
+                                    <span>${eventDate.toLocaleDateString()} at ${event.time}</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-500 mt-1">
+                                    <i class="fas fa-map-marker-alt mr-2"></i>
+                                    <span>${event.location}</span>
+                                </div>
+                            </div>
+                            <div class="text-right space-y-2">
+                                <span class="px-3 py-1 rounded-full text-xs font-medium ${isPastEvent ? 'bg-gray-100 text-gray-600' : 'bg-green-100 text-green-800'}">
+                                    ${isPastEvent ? 'Completed' : 'Active'}
+                                </span>
+                                <div class="flex space-x-2">
+                                    <button class="text-blue-500 hover:text-blue-700 text-sm view-registrations-btn" data-event-id="${event.id}">
+                                        <i class="fas fa-users mr-1"></i>View Registrations
+                                    </button>
+                                    <button class="text-red-500 hover:text-red-700 text-sm delete-event-btn" data-event-id="${event.id}">
+                                        <i class="fas fa-trash mr-1"></i>Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Event Details Modal
+        function showEventDetails(eventId) {
+            const event = events.find(e => e.id === eventId);
+            if (!event) return;
+
+            const eventDate = new Date(event.date);
+            const isBookmarked = myBookmarks.some(b => b.id === event.id);
+            const isRegistered = myRegistrations.some(r => r.eventId === event.id);
+            const isPastEvent = eventDate < new Date();
+
+            const modalHTML = `
+                <div id="event-details-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                        <div class="relative">
+                            ${event.imageUrl ? `
+                                <div class="h-64 bg-gray-200 overflow-hidden rounded-t-lg">
+                                    <img src="${event.imageUrl}" alt="${event.title}" class="w-full h-full object-cover" onerror="this.style.display='none'">
+                            </div>
+                            ` : `
+                                <div class="h-64 bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center rounded-t-lg">
+                                    <i class="fas fa-calendar-alt text-6xl text-purple-300"></i>
+                            </div>
+                            `}
+                            
+                            <button id="close-event-details" class="absolute top-4 right-4 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 transition-all">
+                                <i class="fas fa-times text-gray-600"></i>
+                            </button>
+                            </div>
+                        
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="flex-1">
+                                    <h2 class="text-2xl font-bold text-gray-900 mb-2">${event.title}</h2>
+                                    <div class="flex items-center space-x-4 mb-4">
+                                        <span class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">${event.category}</span>
+                                        <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">${event.club}</span>
+                                    </div>
+                                </div>
+                                <button class="bookmark-btn-modal ${isBookmarked ? 'text-yellow-500' : 'text-gray-300'} hover:text-yellow-500 transition-colors text-2xl" data-event-id="${event.id}">
+                                    <i class="fas fa-bookmark"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="space-y-4 mb-6">
+                                <div class="flex items-center text-gray-600">
+                                    <i class="fas fa-calendar text-purple-500 mr-3"></i>
+                                    <span class="font-medium">Date:</span>
+                                    <span class="ml-2">${eventDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                                </div>
+                                <div class="flex items-center text-gray-600">
+                                    <i class="fas fa-clock text-purple-500 mr-3"></i>
+                                    <span class="font-medium">Time:</span>
+                                    <span class="ml-2">${event.time}</span>
+                                </div>
+                                <div class="flex items-center text-gray-600">
+                                    <i class="fas fa-map-marker-alt text-purple-500 mr-3"></i>
+                                    <span class="font-medium">Location:</span>
+                                    <span class="ml-2">${event.location}</span>
+                                </div>
+                                <div class="flex items-center text-gray-600">
+                                    <i class="fas fa-user text-purple-500 mr-3"></i>
+                                    <span class="font-medium">Organizer:</span>
+                                    <span class="ml-2">${event.organizerName}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-3">Description</h3>
+                                <p class="text-gray-600 leading-relaxed">${event.description}</p>
+                            </div>
+                            
+                            <div class="flex space-x-4">
+                                ${isPastEvent ? 
+                                    '<span class="flex-1 text-center py-3 px-6 bg-gray-100 text-gray-500 rounded-lg font-medium">Event Ended</span>' :
+                                    isRegistered ?
+                                        '<span class="flex-1 text-center py-3 px-6 bg-green-100 text-green-800 rounded-lg font-medium"><i class="fas fa-check mr-2"></i>Already Registered</span>' :
+                                        `<button class="flex-1 bg-purple-600 text-white py-3 px-6 rounded-lg hover:bg-purple-700 transition-colors font-medium register-btn-modal" data-event-id="${event.id}">
+                                            <i class="fas fa-ticket-alt mr-2"></i>Register for Event
+                                        </button>`
+                                }
+                                <button id="close-event-details-btn" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modalContainer.innerHTML = modalHTML;
+            
+            // Add event listeners for modal
+            document.getElementById('close-event-details').addEventListener('click', closeEventDetailsModal);
+            document.getElementById('close-event-details-btn').addEventListener('click', closeEventDetailsModal);
+            
+            // Close modal when clicking outside
+            document.getElementById('event-details-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'event-details-modal') {
+                    closeEventDetailsModal();
+                }
+            });
+            
+            // Handle bookmark toggle in modal
+            document.querySelector('.bookmark-btn-modal').addEventListener('click', async () => {
+                await handleBookmarkToggle(eventId);
+                closeEventDetailsModal();
+            });
+            
+            // Handle registration in modal
+            const registerBtn = document.querySelector('.register-btn-modal');
+            if (registerBtn) {
+                registerBtn.addEventListener('click', async () => {
+                    await handleEventRegistration(eventId);
+                    closeEventDetailsModal();
+                });
+            }
+        }
+
+        function closeEventDetailsModal() {
+            const modal = document.getElementById('event-details-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // Event Handlers
+        async function handleEventRegistration(eventId) {
+            if (!currentUserData) return;
+
+            try {
+                showLoading();
+                
+                const registrationData = {
+                    userId: currentUserData.uid,
+                    eventId: eventId,
+                    userName: currentUserData.name,
+                    userEmail: currentUserData.email,
+                    registrationDate: Timestamp.now()
+                };
+
+                await addDoc(collection(db, "registrations"), registrationData);
+                
+                // Update user's registered events
+                await updateDoc(doc(db, "users", currentUserData.uid), {
+                    registeredEvents: arrayUnion(eventId)
+                });
+
+                // Refresh data
+                await fetchMyRegistrations();
+                renderEventCards();
+                
+                showCustomAlert('Successfully registered for the event!', 'success');
+            } catch (error) {
+                console.error("Registration error:", error);
+                showCustomAlert("Failed to register for the event");
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function handleBookmarkToggle(eventId) {
+            if (!currentUserData) return;
+
+            try {
+                const event = events.find(e => e.id === eventId);
+                const isBookmarked = myBookmarks.some(b => b.id === eventId);
+
+                if (isBookmarked) {
+                    await updateDoc(doc(db, "users", currentUserData.uid), {
+                        bookmarkedEvents: arrayRemove(event)
+                    });
+                } else {
+                    await updateDoc(doc(db, "users", currentUserData.uid), {
+                        bookmarkedEvents: arrayUnion(event)
+                    });
+                }
+
+                // Refresh data
+                await fetchMyBookmarks();
+                renderEventCards();
+                renderMyBookmarks();
+            } catch (error) {
+                console.error("Bookmark error:", error);
+                showCustomAlert("Failed to update bookmark");
+            }
+        }
+
+        async function handleAddEvent(formData) {
+            try {
+                showLoading();
+                
+                const eventData = {
+                    title: formData.title,
+                    description: formData.description,
+                    category: formData.category,
+                    club: formData.club,
+                    date: Timestamp.fromDate(new Date(formData.date)),
+                    time: formData.time,
+                    location: formData.location,
+                    imageUrl: formData.imageUrl || null,
+                organizerId: currentUserData.uid,
+                    organizerName: currentUserData.name,
+                    createdAt: Timestamp.now()
+                };
+
+                await addDoc(collection(db, "events"), eventData);
+                
+                // Refresh data
+                await fetchEvents();
+                renderMyEvents();
+                
+                showCustomAlert('Event created successfully!', 'success');
+                
+                // Switch to My Events tab
+                switchTab('my-events');
+                
+                // Clear form
+                document.getElementById('add-event-form').reset();
+            } catch (error) {
+                console.error("Add event error:", error);
+                showCustomAlert("Failed to create event");
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function handleDeleteEvent(eventId) {
+            if (!confirm('Are you sure you want to delete this event?')) return;
+
+            try {
+                showLoading();
+                
+                await deleteDoc(doc(db, "events", eventId));
+                
+                // Refresh data
+                await fetchEvents();
+                renderMyEvents();
+
+                showCustomAlert('Event deleted successfully!', 'success');
+            } catch (error) {
+                console.error("Delete event error:", error);
+                showCustomAlert("Failed to delete event");
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Tab Management
+        function switchTab(tabName) {
+            // Remove active class from all tabs
+            document.querySelectorAll('[id^="tab-"]').forEach(tab => {
+                tab.classList.remove('tab-active');
+            });
+            
+            // Hide all content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Show selected tab and content
+            document.getElementById(`tab-${tabName}`).classList.add('tab-active');
+            document.getElementById(`${tabName}-content`).classList.remove('hidden');
+        }
+
+        // Filter Functions
+        function applyFilters() {
+            const category = document.getElementById('category-filter').value;
+            const club = document.getElementById('club-filter').value;
+            const dateRange = document.getElementById('date-filter').value;
+            
+            filteredEvents = events.filter(event => {
+                const eventDate = new Date(event.date);
+                const now = new Date();
+                
+                // Category filter
+                if (category && event.category !== category) return false;
+                
+                // Club filter
+                if (club && event.club !== club) return false;
+                
+                // Date filter
+                if (dateRange) {
+                    switch (dateRange) {
+                        case 'upcoming':
+                            if (eventDate < now) return false;
+                            break;
+                        case 'today':
+                            const today = new Date();
+                            if (eventDate.toDateString() !== today.toDateString()) return false;
+                            break;
+                        case 'this-week':
+                            const weekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+                            if (eventDate < now || eventDate > weekFromNow) return false;
+                            break;
+                        case 'this-month':
+                            const monthFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+                            if (eventDate < now || eventDate > monthFromNow) return false;
+                            break;
+                    }
+                }
+                
+                return true;
+            });
+            
+            renderEventCards();
+        }
+
+        function clearFilters() {
+            document.getElementById('category-filter').value = '';
+            document.getElementById('club-filter').value = '';
+            document.getElementById('date-filter').value = '';
+            filteredEvents = [...events];
+            renderEventCards();
+        }
+
+        // Event Listeners Setup
+        function setupStudentEventListeners() {
+            // Tab switching
+            document.getElementById('tab-events').addEventListener('click', () => switchTab('events'));
+            document.getElementById('tab-my-registrations').addEventListener('click', () => switchTab('my-registrations'));
+            document.getElementById('tab-bookmarks').addEventListener('click', () => switchTab('bookmarks'));
+            
+            // Filters
+            document.getElementById('apply-filters').addEventListener('click', applyFilters);
+            document.getElementById('clear-filters').addEventListener('click', clearFilters);
+            
+            // Logout
+            document.getElementById('logout-btn').addEventListener('click', handleLogout);
+            
+            // Event delegation for dynamic content
+            document.addEventListener('click', async (e) => {
+                if (e.target.closest('.register-btn')) {
+                    const eventId = e.target.closest('.register-btn').dataset.eventId;
+                    await handleEventRegistration(eventId);
+                }
+                
+                if (e.target.closest('.bookmark-btn')) {
+                    const eventId = e.target.closest('.bookmark-btn').dataset.eventId;
+                    await handleBookmarkToggle(eventId);
+                }
+                
+                if (e.target.closest('.remove-bookmark-btn')) {
+                    const eventId = e.target.closest('.remove-bookmark-btn').dataset.eventId;
+                    await handleBookmarkToggle(eventId);
+                }
+                
+                if (e.target.closest('.view-details-btn')) {
+                    const eventId = e.target.closest('.view-details-btn').dataset.eventId;
+                    showEventDetails(eventId);
+                }
+            });
+        }
+
+        function setupOrganizerEventListeners() {
+            // Tab switching
+            document.getElementById('tab-my-events').addEventListener('click', () => switchTab('my-events'));
+            document.getElementById('tab-add-event').addEventListener('click', () => switchTab('add-event'));
+            document.getElementById('tab-registrations').addEventListener('click', () => switchTab('registrations'));
+            
+            // Add event form
+            document.getElementById('add-event-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = {
+                    title: document.getElementById('event-title').value,
+                    description: document.getElementById('event-description').value,
+                    category: document.getElementById('event-category').value,
+                    club: document.getElementById('event-club').value,
+                    date: document.getElementById('event-date').value,
+                    time: document.getElementById('event-time').value,
+                    location: document.getElementById('event-location').value,
+                    imageUrl: document.getElementById('event-image').value
+                };
+                await handleAddEvent(formData);
+            });
+            
+            // Cancel add event
+            document.getElementById('cancel-add-event').addEventListener('click', () => {
+                document.getElementById('add-event-form').reset();
+                switchTab('my-events');
+            });
+            
+            // Add event button
+            document.getElementById('add-event-btn').addEventListener('click', () => switchTab('add-event'));
+            
+            // Logout
+            document.getElementById('logout-btn').addEventListener('click', handleLogout);
+            
+            // Event delegation for dynamic content
+            document.addEventListener('click', async (e) => {
+                if (e.target.closest('.delete-event-btn')) {
+                    const eventId = e.target.closest('.delete-event-btn').dataset.eventId;
+                    await handleDeleteEvent(eventId);
+                }
+            });
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            console.log('Mobile menu clicked');
+        });
+
+        // Initialize the app
+        showHomePage();
+    </script>
+</body>
+</html>
