@@ -40,9 +40,9 @@ Markdown
 
 1. **Clone & Enter:**
 
-   ```bash```
+   ```bash
    git clone https://github.com/MrAryanShah/EventEase-Campus-Ticketing.git
-   cd EventEase-Campus-Ticketing
+   cd EventEase-Campus-Ticketing ```
    
 2.**Install Packages:**
 ```bash```
