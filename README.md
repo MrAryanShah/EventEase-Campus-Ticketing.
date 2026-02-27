@@ -29,6 +29,17 @@ backend.js: Handles all Firebase communications and logic.
 
 admin.html / organizer.html: Management dashboards for event staff.
 
+## 📸 Screenshots
+
+### 👨‍💼 Admin Panel
+![Admin Panel](screenshots/admin.png)
+
+### 🧑‍🎓 Student View
+![Student View](screenshots/student.png)
+
+### 🗂 Organizer Dashboard
+![Organizer Dashboard](screenshots/organizer.png)
+
 
 ## 🚀 Getting Started
 
