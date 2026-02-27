@@ -1,6 +1,6 @@
-🎫 **EventEase: Campus Ticketing System:**
+# 🎟️ EventEase – Campus Event Ticketing System
 
-A real-time campus event ticketing and verification system built to replace manual entry logs with high-speed digital scanning.
+> A real-time web platform for managing campus events, ticket booking, and QR-based verification.
 
 🚀 **Key Features:**
 Live QR Verification: Uses HTML5-QRCode to scan and verify tickets in milliseconds.
