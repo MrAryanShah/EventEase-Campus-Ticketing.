@@ -2,6 +2,8 @@
 
 > A real-time web platform for managing campus events, ticket booking, and QR-based verification.
 
+
+
 🚀 **Key Features:**
 Live QR Verification: Uses HTML5-QRCode to scan and verify tickets in milliseconds.
 
